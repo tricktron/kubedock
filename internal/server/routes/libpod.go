@@ -62,9 +62,9 @@ func RegisterLibpodRoutes(router *gin.Engine, cr *common.ContextRouter) {
 	router.POST("/libpod/images/pull", wrap(libpod.ImagePull))
 	router.GET("/libpod/images/json", wrap(common.ImageList))
 	router.GET("/libpod/images/:image/*json", wrap(common.ImageJSON))
+	router.POST("/libpod/build", wrap(common.ImageBuild))
 
 	// not supported podman api at the moment
 	router.GET("/libpod/info", httputil.NotImplemented)
-	router.POST("/libpod/build", httputil.NotImplemented)
 	router.POST("/libpod/images/load", httputil.NotImplemented)
 }

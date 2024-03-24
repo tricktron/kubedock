@@ -1,9 +1,17 @@
 package common
 
 import (
+	"bytes"
+	"context"
+	"errors"
 	"net/http"
 	"strings"
 
+	"github.com/containers/buildah"
+	"github.com/containers/buildah/define"
+	"github.com/containers/buildah/imagebuildah"
+	"github.com/containers/storage"
+	"github.com/containers/storage/pkg/unshare"
 	"github.com/gin-gonic/gin"
 
 	"github.com/joyrex2001/kubedock/internal/config"
@@ -66,4 +74,47 @@ func ImageJSON(cr *ContextRouter, c *gin.Context) {
 			"Env": []string{},
 		},
 	})
+}
+
+func ImageBuild(cr *ContextRouter, c *gin.Context) {
+	dockerfile := c.Query("dockerfile")
+	target := c.Query("target")
+	if buildah.InitReexec() {
+		return
+	}
+	unshare.MaybeReexecUsingUserNamespace(false)
+
+	buildStoreOptions, err := storage.DefaultStoreOptions()
+	if err != nil {
+		panic(err)
+	}
+	buildStore, err := storage.GetStore(buildStoreOptions)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if _, err := buildStore.Shutdown(false); err != nil {
+			if !errors.Is(err, storage.ErrLayerUsedByContainer) {
+				panic(err)
+			}
+		}
+	}()
+
+	output := &bytes.Buffer{}
+
+	buildOptions := define.BuildOptions{
+		Out:    output,
+		Err:    output,
+		Target: target,
+	}
+
+	_, _, err = imagebuildah.BuildDockerfiles(
+		context.TODO(),
+		buildStore,
+		buildOptions,
+		dockerfile,
+	)
+
+	c.JSON(http.StatusOK, gin.H{"stream": output.String()})
 }

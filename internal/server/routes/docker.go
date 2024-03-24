@@ -57,6 +57,7 @@ func RegisterDockerRoutes(router *gin.Engine, cr *common.ContextRouter) {
 	router.GET("/images/json", wrap(common.ImageList))
 	router.GET("/images/:image/*json", wrap(common.ImageJSON))
 	router.POST("/images/prune", wrap(docker.ImagesPrune))
+	router.POST("/libpod/build", wrap(common.ImageBuild))
 
 	router.POST("/volumes/prune", wrap(docker.VolumesPrune))
 
@@ -70,7 +71,6 @@ func RegisterDockerRoutes(router *gin.Engine, cr *common.ContextRouter) {
 	router.POST("/containers/:id/unpause", httputil.NotImplemented)
 	router.GET("/containers/:id/attach/ws", httputil.NotImplemented)
 	router.POST("/containers/prune", httputil.NotImplemented)
-	router.POST("/build", httputil.NotImplemented)
 	router.GET("/volumes", httputil.NotImplemented)
 	router.GET("/volumes/:id", httputil.NotImplemented)
 	router.DELETE("/volumes/:id", httputil.NotImplemented)
