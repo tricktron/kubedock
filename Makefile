@@ -7,7 +7,7 @@ run:
 	CGO_ENABLED=0 go run main.go server -P -v 2 --port-forward
 
 build:
-	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o kubedock
+	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -tags containers_image_openpgp -o kubedock
 
 gox:
 	CGO_ENABLED=0 gox -os="linux darwin windows" -arch="amd64" \
