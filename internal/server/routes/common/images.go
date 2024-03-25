@@ -74,8 +74,12 @@ func ImageJSON(cr *ContextRouter, c *gin.Context) {
 			"Env": []string{},
 		},
 	})
-}
+} 
 
+// ImageBuild - Build an image from the given Dockerfile
+//https://docs.docker.com/engine/api/v1.41/#tag/Image/operation/ImageBuild
+//https://docs.podman.io/en/latest/_static/api.html?version=v4.2#tag/images-(compat)/operation/ImageCreate
+// POST "/build"
 func ImageBuild(cr *ContextRouter, c *gin.Context) {
 	dockerfile := c.Query("dockerfile")
 	target := c.Query("target")
