@@ -4,7 +4,7 @@ LDFLAGS="-X github.com/joyrex2001/kubedock/internal/config.Date=`date -u +%Y%m%d
 		 -X github.com/joyrex2001/kubedock/internal/config.Image=joyrex2001/kubedock:`git describe --tags | cut -d- -f1`"
 
 run:
-	CGO_ENABLED=0 go run main.go server -P -v 2 --port-forward
+	CGO_ENABLED=0 go run -tags containers_image_openpgp main.go server -P -v 2 --port-forward
 
 build:
 	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -tags containers_image_openpgp -o kubedock

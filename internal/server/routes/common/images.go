@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/containers/buildah"
 	"github.com/containers/buildah/define"
 	"github.com/containers/buildah/imagebuildah"
 	"github.com/containers/storage"
-	"github.com/containers/storage/pkg/unshare"
 	"github.com/gin-gonic/gin"
 
 	"github.com/joyrex2001/kubedock/internal/config"
@@ -83,10 +81,6 @@ func ImageJSON(cr *ContextRouter, c *gin.Context) {
 func ImageBuild(cr *ContextRouter, c *gin.Context) {
 	dockerfile := c.Query("dockerfile")
 	target := c.Query("target")
-	if buildah.InitReexec() {
-		return
-	}
-	unshare.MaybeReexecUsingUserNamespace(false)
 
 	buildStoreOptions, err := storage.DefaultStoreOptions()
 	if err != nil {
